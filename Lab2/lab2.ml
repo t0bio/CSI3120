@@ -1,8 +1,8 @@
 (* CSI3120 lab 2
 Written by:
 Oluwatobilba Ogunbi 300202843
-Tara Denaud 
-Sanika  *)
+Tara Denaud 300318926 
+Sanika 300283847 *)
 
 type job = {start_time: int; duration: int; priority: int}
 
