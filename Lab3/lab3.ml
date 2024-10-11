@@ -2,7 +2,7 @@
 Written by:
 Oluwatobilba Ogunbi 300202843
 Tara Denaud 300318926 
-Sanika 300283847 *)
+Sanika Sisodia 300283847 *)
 
 (*location type*)
 type location = {
