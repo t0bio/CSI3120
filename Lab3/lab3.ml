@@ -79,7 +79,7 @@ let assign_locations vehicles locations =
   let sorted_locations = sort_by_priority locations in
   let rec assign remaining_locations = function
     | [] -> ()
-    | vehicle :: rest as all_vehicles ->
+    | vehicle :: rest ->
         let capacity = vehicle.capacity - List.length vehicle.assigned_locations in
         let (assigned, remaining) = 
           List.partition 
@@ -117,31 +117,30 @@ let display_routes optimized_routes =
   ) optimized_routes
 
   let main () =
-    Printf.printf "Welcome to the Multi-Vehicle Route Optimizer!\n\n";
+    Printf.printf "Welcome to the Route Optimizer folks :D\n\n";
     
-    (* Get locations from user *)
+    (* gettin locations deets from user *)
     Printf.printf "Enter the number of delivery locations:\n";
     let locations = get_locations [] in
     
-    (* Get vehicles from user *)
+    (* gettin vehicle details from user *)
     Printf.printf "\nEnter vehicle details:\n";
     let vehicles = get_vehicles [] 1 in
     
-    (* Ask if vehicles should return to start *)
+    (* check if vehicles shoudl return to start*)
     let return_to_start = match read_string "\nShould vehicles return to the starting location? (y/n): " with
       | "y" | "Y" -> true
       | _ -> false
     in
     
-    (* Assign locations to vehicles *)
+    (* assign locations to vehicles *)
     assign_locations vehicles locations;
     
-    (* Optimize routes *)
+    (*optimizing*)
     let optimized_routes = optimize_all_routes vehicles return_to_start in
     
-    (* Display results *)
+    (*displaying results**)
     Printf.printf "\nOptimized Routes:\n";
     display_routes optimized_routes
   
-  (* Run the program *)
   let () = main ()
