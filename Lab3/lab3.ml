@@ -36,28 +36,28 @@ let get_location () =
   let name = read_string "Enter location name: " in
   let x = read_float "Enter X coordinate: " in
   let y = read_float "Enter Y coordinate: " in
-  let priority = read_int "Enter priority: " in
+  let priority = read_int "Priority: " in
   {name; x; y; priority}
 
 (* reading multiple locations from user *)
-let rec get_locations acc =
-  let location = get_location () in
-  let acc = location :: acc in
-  match read_string "Add another location? (y/n): " with
-  | "y" | "Y" -> get_locations acc
-  | _ -> acc
+let rec get_locations acc count index =
+  if count = 0 then acc
+  else begin
+    Printf.printf "\nEnter details for location %d:\n" index;
+    let location = get_location () in
+    get_locations (location :: acc) (count - 1) (index)
+  end
 
 (* reading vehicle details from user *)
 let get_vehicle id =
-  let capacity = read_int (Printf.sprintf "Enter capacity for vehicle %d: " id) in
+  let capacity = read_int (Printf.sprintf "Vehicle capacity %d: " id) in
   {id; capacity; assigned_locations = []}
 
-let rec get_vehicles acc id =
-  let vehicle = get_vehicle id in
-  let acc = vehicle :: acc in
-  match read_string "Add another vehicle? (y/n): " with
-  | "y" | "Y" -> get_vehicles acc (id + 1)
-  | _ -> acc
+let rec get_vehicles acc id count =
+  if count = 0 then acc
+  else
+    let vehicle = get_vehicle id in
+    get_vehicles (vehicle :: acc) (id + 1) (count - 1)
 
 (* distance between two locations *)
 let distance l1 l2 =
@@ -77,18 +77,16 @@ let route_distance locations =
 (* assigning locations to vehicles *)
 let assign_locations vehicles locations =
   let sorted_locations = sort_by_priority locations in
-  let rec assign remaining_locations = function
-    | [] -> ()
-    | vehicle :: rest ->
-        let capacity = vehicle.capacity - List.length vehicle.assigned_locations in
-        let (assigned, remaining) = 
-          List.partition 
-            (fun _ -> List.length vehicle.assigned_locations < vehicle.capacity) 
-            (List.filteri (fun i _ -> i < capacity) remaining_locations) 
-        in
-        vehicle.assigned_locations <- vehicle.assigned_locations @ assigned;
-        if remaining = [] then ()
-        else assign remaining (rest @ [vehicle])
+  let rec assign remaining_locations vehicles =
+    match remaining_locations, vehicles with
+    | [], _ -> () 
+    | _, [] -> () 
+    | loc :: remaining_locs, vehicle :: rest ->
+        if List.length vehicle.assigned_locations < vehicle.capacity then begin
+          vehicle.assigned_locations <- vehicle.assigned_locations @ [loc];
+          assign remaining_locs (vehicle :: rest) 
+        end else
+          assign remaining_locs rest 
   in
   assign sorted_locations vehicles
 
@@ -111,21 +109,29 @@ let optimize_all_routes vehicles return_to_start =
 (*show routes*)
 let display_routes optimized_routes =
   List.iter (fun (id, (route, distance)) ->
-    Printf.printf "\nVehicle %d Route:\n" id;
-    List.iter (fun loc -> Printf.printf "  %s (Priority: %d)\n" loc.name loc.priority) route;
-    Printf.printf "Total Distance: %.2f\n" distance
+    Printf.printf "\nVehicle %d route: " id;
+    List.iteri (fun i loc -> 
+      if i = List.length route - 1 then Printf.printf "%s" loc.name
+      else Printf.printf "%s -> " loc.name
+    ) route;
+    
+    Printf.printf "\n";
+    Printf.printf "Total distance: %.2f km\n" distance
   ) optimized_routes
 
   let main () =
     Printf.printf "Welcome to the Route Optimizer folks :D\n\n";
     
     (* gettin locations deets from user *)
-    Printf.printf "Enter the number of delivery locations:\n";
-    let locations = get_locations [] in
+    Printf.printf "Enter the number of delivery locations: ";
+    let num_locations = read_int "" in
+    let locations = get_locations [] num_locations 1 in
+    Printf.printf "\n";
     
     (* gettin vehicle details from user *)
-    Printf.printf "\nEnter vehicle details:\n";
-    let vehicles = get_vehicles [] 1 in
+    Printf.printf "Enter the number of vehicles: ";
+    let num_vehicles = read_int "" in
+    let vehicles = get_vehicles [] 1 num_vehicles in
     
     (* check if vehicles shoudl return to start*)
     let return_to_start = match read_string "\nShould vehicles return to the starting location? (y/n): " with
