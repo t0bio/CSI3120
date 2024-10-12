@@ -96,7 +96,7 @@ let optimize_route vehicle return_to_start =
   let total_distance = route_distance route in
   let total_distance = 
     if return_to_start && List.length route > 0 then
-      total_distance +. distance (List.hd route) (List.hd (List.rev route))
+      total_distance +. distance (List.hd (List.rev route)) {name="Home"; x=0.0; y=0.0; priority=0}
     else
       total_distance
   in
