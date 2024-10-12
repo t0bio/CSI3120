@@ -32,7 +32,8 @@ let read_string prompt =
   print_string prompt;
   read_line ()
 
-let get_location () =
+let get_location index =
+  Printf.printf "Enter details for location %d\n" index;
   let name = read_string "Enter location name: " in
   let x = read_float "Enter X coordinate: " in
   let y = read_float "Enter Y coordinate: " in
@@ -43,9 +44,8 @@ let get_location () =
 let rec get_locations acc count index =
   if count = 0 then acc
   else begin
-    Printf.printf "\nEnter details for location %d:\n" index;
-    let location = get_location () in
-    get_locations (location :: acc) (count - 1) (index)
+    let location = get_location index in
+    get_locations (location :: acc) (count - 1) (index + 1)
   end
 
 (* reading vehicle details from user *)
