@@ -12,6 +12,13 @@ let sudoku = [|
   [|0; 2; 0; 0|]
 |]
 
+let grid2 =[|
+  [|0; 2; 0; 4|];
+  [|0; 0; 1; 0|];
+  [|0; 1; 0; 0|];
+  [|4; 0; 0; 0|]
+|]
+
 (* check if grid is valid*)
   let is_valid grid row col num =
     let n = Array.length grid in
@@ -20,18 +27,18 @@ let sudoku = [|
     let subgrid_col = col - col mod subgrid_size in
     let valid = ref true in
     (*checking the row*)
-    for i = 0 to n - 1 do
-      if grid.(row).(i) = num && i <> col then
+    for j = 0 to n - 1 do
+      if grid.(row).(j) = num && j <> col then
         valid := false
     done;
     (*checking the column*)
-    for j = 0 to n - 1 do
-      if grid.(j).(col) = num && j <> row then
+    for i = 0 to n - 1 do
+      if grid.(i).(col) = num && i <> row then
         valid := false
     done;
     (*checking the subgrid*)
-    for j = 0 to subgrid_size - 1 do
-      for i = 0 to subgrid_size - 1 do
+    for i = 0 to subgrid_size - 1 do
+      for j = 0 to subgrid_size - 1 do
         if grid.(subgrid_row + i).(subgrid_col + j) = num &&
            (subgrid_row + i <> row || subgrid_col + j <> col) then
           valid := false
@@ -53,21 +60,25 @@ let verify grid =
 let rec solve grid = 
   let n = Array.length grid in
   let rec find_empty i j = 
-    if i >= n then None
-    else if j >= n then find_empty (i + 1) 0
+    if i = n then None
+    else if j = n then find_empty (i + 1) 0
     else if grid.(i).(j) = 0 then Some (i, j)
     else find_empty i (j + 1) in
   match find_empty 0 0 with
   | None -> true
   | Some (row, col) ->
   (*trying numbers 1 to n*)
-    let rec try_num num =  
-      if num > n then false
-      else if is_valid grid row col num then 
-        (grid.(row).(col)) <- num;
+  let rec try_num num =  
+    if num > n then false
+    else if is_valid grid row col num then
+      (grid.(row).(col) <- num;
       if solve grid then true
-      else (grid.(row).(col)) <- 0; try_num (num + 1)
-    in try_num 1
+      else (
+        grid.(row).(col) <- 0;
+        try_num (num + 1)
+      )
+    ) else try_num (num + 1)
+  in try_num 1
 
 (*printing solved grid*)
 let print_grid grid = 
@@ -75,8 +86,11 @@ let print_grid grid =
   print_newline ()) grid
 
 let main () =
-  if not (verify sudoku) then Printf.printf "Invalid input grid\n"
-  else if solve sudoku then print_grid sudoku
-  else Printf.printf "No solution exists\n"
+  if not (verify grid2) then
+    Printf.printf "Invalid initial grid\n"
+  else if solve grid2 then
+    print_grid grid2
+  else
+    Printf.printf "No solution exists\n"
 
 let () = main ()
