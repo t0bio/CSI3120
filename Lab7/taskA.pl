@@ -1,10 +1,19 @@
-% CSI3120 Lab 7 
-% All work done by:
-% - Oluwatobiloba Ogunbi 300202843
-% - Tara Denaud 
-% - Sanika 
+% Task A 
+% CSI3120 lab 7 
+% Written by:
+% Oluwatobilba Ogunbi 300202843
+% Tara Denaud 300318926 
+% Sanika Sisodia 300283847 
 
 % Question 1
+
+% Start point for the console (user input)
+right_angle_triangle_console :-
+    write('Enter the height of the right-angled triangle: '),
+    read(N),       
+    nl,
+    triangle(N).   
+
 % base case
 triangle(0) :- !. 
 

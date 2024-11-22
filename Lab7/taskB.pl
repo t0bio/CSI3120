@@ -1,5 +1,11 @@
 % Task B
 
+% CSI3120 lab 7 
+% Written by:
+% Oluwatobilba Ogunbi 300202843
+% Tara Denaud 300318926 
+% Sanika Sisodia 300283847 
+
 % DCG for character description
 character_description -->
     character_type(Type),
@@ -25,7 +31,7 @@ character_subtype(hero, elf) --> [elf].
 % sequence
 sequence(Sequence) --> [Sequence], { integer(Sequence), Sequence > 0 }.
 
-%movement
+% movement
 movement_direction(enemy, _, towards) --> [towards].
 movement_direction(hero, has_weapon, towards) --> [towards].
 movement_direction(hero, no_weapon, away) --> [away].
