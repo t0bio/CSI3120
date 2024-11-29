@@ -1,0 +1,4 @@
+destination('"Paris"', '"2024-12-01"', '"2024-12-10"', 2000).
+expense('"Paris"', '"food"', 500).
+expense('"Paris"', '"transport"', 300).
+expense('"London"', '"food"', 600).
